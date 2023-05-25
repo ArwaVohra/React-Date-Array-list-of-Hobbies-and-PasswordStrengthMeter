@@ -1,15 +1,43 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
+// import { useState,formState } from 'react';
+// import  from '@mui/material/DemoItem';
+
+// import dayjs from 'dayjs';
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import DatePicker from '@mui/x-date-pickers/DatePicker';
+// import DatePicker from '@mui/x-date-pickers';
+
+
+// import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
+
+// import { DatePicker } from '@mui/x-date-pickers';
+// import DatePicker from '@mui/lab/DatePicker'; //lab wala which worked
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import { DatePicker } from '@mui/x-date-pickers';
+
+// import DatePicker from 'react-date-picker';
+// import 'react-date-picker/dist/DatePicker.css';
+// import 'react-calendar/dist/Calendar.css';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { DateField } from '@mui/x-date-pickers/DateField';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+// import DatePicker from 'react-datepicker';
+// import 'react-datepicker/dist/react-datepicker.css';
+
+// import PasswordStrengthBar from 'react-password-strength-bar';
+// import PasswordStrengthMeter from './component/PasswordStrengthMeter';
+// import PasswordStrengthMeter from './progressbar';
 import AppPasswordStrengthMeter from './progressbar';
 
 import {
@@ -44,6 +72,8 @@ function App() {
       .max(10, '10 digit number required'),
 
       date_of_birth: Yup.string().required('Birth-Date is required'),
+    // .max(26-5-2023, 'cant be more than todays date'),
+
 
     username: Yup.string()
       .required('Username is required')
@@ -70,7 +100,31 @@ function App() {
 
   const onSubmit = data => {
     console.log(JSON.stringify(data, null, 2));
+    // console.log({mydate})
   };
+  // const [mydate, setMydate] = useState(null)
+
+
+  const [value, setValue] = useState(null);
+
+  const [error, setError] = useState(null);
+  const errorMessage = useMemo(() => {
+    switch (error) {
+      case 'maxDate':
+      case 'minDate': {
+        return 'Please select a date in the first quarter of 2022';
+      }
+
+      case 'invalidDate': {
+        return 'Your date is not valid';
+      }
+
+      default: {
+        return '';
+      }
+    }
+  }, [error]);
+
 
   const [password,setPassword] = useState('')
 
@@ -175,13 +229,15 @@ function App() {
               <br />
               <br />
               <br />
-
               <Grid item xs={12} sm={12}>
+
+
                 <Typography color={'#424242'} align="left" sx={{ m: '1rem', fontWeight: 'bold', fontSize: 23, display: 'inline', }}>
                   Date of Birth
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDateFns}  >
                   <DatePicker
+                    // sx={{ display:'inline'}}
                     placeholder="Enter Your BirthDate"
                     label="Date"
                     defaultValue={'null'}
@@ -189,15 +245,30 @@ function App() {
                     name="username"
                     required
                     fullWidth
-                    maxDate={new Date()}
+                    // minDate={'2022-01-01T00:00:00.000'}
+                    // maxDate={'2022-03-31T23:59:59.999'}
                     margin="dense"
+                    // {...register('dateone')}
+                    // error={errors.dateone ? true : false}
+
+                    // onError={(newError) => setError(newError)}
+                    // slotProps={{
+                    //   textField: {
+                    //     helperText: errorMessage,
+                    //   },
+                    // }}
+
+
                     error={Boolean(errors.date_of_birth)}
                     helperText={errors.date_of_birth?.message}
-                
+                    // rules={{
+                    //   required:"Date of Birth"
+                    // }}
                   />
                 </LocalizationProvider>
-                
-               
+                {/* <Typography variant="inherit" color="error">
+                  {errors.date_of_birth?.message}
+                </Typography> */}
               </Grid>
 
 
@@ -242,12 +313,20 @@ function App() {
                   fullWidth
                   margin="dense"
                   onChange={e => setPassword(e.target.value)}
-                
+                //    {...register('passwordmssg')}
+                //   error={errors.passwordmssg ? true : false}
                 />
-               
+               {/* <input
+                     type='password'
+                      className="form-control shadow-none" 
+                      placeholder='Password' 
+                      onChange={e => setPassword(e.target.value)}
+                      ></input> */}
                <AppPasswordStrengthMeter password={password} />
 
-                
+                <Typography variant="inherit" color="error">
+                  {errors.passwordmssg?.message}
+                </Typography>
               </Grid>
 
             </Grid>
