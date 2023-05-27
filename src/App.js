@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 
 import { useForm, Controller } from 'react-hook-form';
@@ -23,15 +23,9 @@ import {
   Button,
   Container,
   shadows,
-
+  Divider
 
 } from '@mui/material'; // use this instead of  @material-ui/core
-
-
-
-
-
-
 
 function App() {
 
@@ -43,7 +37,7 @@ function App() {
       .min(10, '10 digit number required')
       .max(10, '10 digit number required'),
 
-      date_of_birth: Yup.string().required('Birth-Date is required'),
+    date_of_birth: Yup.string().required('Birth-Date is required'),
 
     username: Yup.string()
       .required('Username is required')
@@ -72,12 +66,39 @@ function App() {
     console.log(JSON.stringify(data, null, 2));
   };
 
-  const [password,setPassword] = useState('')
+  const [password, setPassword] = useState('')
+
+
+  const [mytext, setMytext] = useState('')
+  const [myarray, setMyarray] = useState([])
+
+
+  const onChangeDo = (e) => {
+    setMytext(e.target.value)
+  }
+
+  const onClickAdd = useCallback((textfromuser) => {
+
+    let list = myarray;
+    list.push(textfromuser);
+    setMyarray(list)
+    setMytext("")
+  })
+
+  const onChangeDel= (index) =>{
+    // let delItem = myarray.splice(index,1)
+    // setMyarray({
+    //   newDeletedList: delItem
+    // })
+    const updatedArray = [...myarray];
+    updatedArray.splice(index, 1);
+    setMyarray(updatedArray);
+  }
 
   return (
 
     <div>
-      
+
       <Typography variant="h4" align="center" sx={{ m: '2rem', fontWeight: 'bold' }} >
         Register your account
       </Typography>
@@ -102,7 +123,7 @@ function App() {
                   margin="dense"
                   {...register('fullname')}
                   error={errors.fullname ? true : false}
-                  
+
                 />
                 <Typography variant="inherit" color="error">
                   {errors.fullname?.message}
@@ -169,7 +190,7 @@ function App() {
                 />
 
               </Grid>
-             
+
               <br />
               <br />
               <br />
@@ -193,11 +214,11 @@ function App() {
                     margin="dense"
                     error={Boolean(errors.date_of_birth)}
                     helperText={errors.date_of_birth?.message}
-                
+
                   />
                 </LocalizationProvider>
-                
-               
+
+
               </Grid>
 
 
@@ -207,11 +228,57 @@ function App() {
               <br />
               <br />
 
+              <Grid>
+                <Typography color={'#424242'} align="left" sx={{ m: '1rem', fontWeight: 'bold', fontSize: 23 }}>
+                  List Your Hobbies
+                </Typography>
+              </Grid>
+              <Grid>
 
-              <Typography variant="h5" align="left" sx={{ m: '1rem', fontWeight: 'bold' }}>
-                Login Information
+                <TextField
+                  required
+                  id="hobbies"
+                  name="hobbies"
+                  label="Hobbies"
+                  fullWidth
+                  margin="dense"
+                  onChange={onChangeDo}
+                // {...register('hobbies')}
+                // error={errors.hobbies ? true : false}
+                />
+              </Grid>
+              <Grid>
+                <Button variant="contained"
+                  value={mytext}
+                  color="primary" sx={{ ml: 3, mt: 2 }}
+                  onClick={() => onClickAdd(mytext)}
+                >Add</Button>
+
+              </Grid>
+
+
+              <Divider sx={{ mt: 2, width: '100%', bgcolor: 'textSecondary', height: '-2rem' }} > </Divider>
+              <Typography variant='h6' align='left' sx={{ m: 5 }} >
+
+                {myarray.map((value, index) =>
+
+                  <b key={index} >
+                    
+                    {index + 1} {value}    <Button variant="contained" color="error" size="small" onClick={()=>onChangeDel(index)} >Delete</Button> 
+                    <Divider sx={{ mt: 2, width: '100%', bgcolor: 'textSecondary', height: '-2rem' }} > </Divider>
+
+                  </b>)}
+
               </Typography>
 
+
+              <br />
+
+              <Grid item xs={12} >
+                <Typography variant="h5" align="left" sx={{ m: '1rem', fontWeight: 'bold' }}>
+                  Login Information
+                </Typography>
+              </Grid>
 
               <Grid item xs={12} sm={12}>
                 <TextField
@@ -242,12 +309,12 @@ function App() {
                   fullWidth
                   margin="dense"
                   onChange={e => setPassword(e.target.value)}
-                
-                />
-               
-               <AppPasswordStrengthMeter password={password} />
 
-                
+                />
+
+                <AppPasswordStrengthMeter password={password} />
+
+
               </Grid>
 
             </Grid>
